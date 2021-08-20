@@ -2,11 +2,19 @@ import { ResourcePicker } from "@shopify/app-bridge-react";
 import React, { useEffect, useState } from "react";
 import ProductEmptyState from "../components/ProductEmptyState";
 import ProductPage from "../components/ProductPage";
+import store from "store-js";
 
-export function index() {
+export function index({ shopOrigin }) {
   const [isOpen, setIsOpen] = useState(false);
   const [products, setProducts] = useState([]);
   const [productsId, setProductsId] = useState([]);
+
+  useEffect(() => {
+    const productList = store.get(`${shopOrigin}-products`);
+    if (productList) {
+      setProducts(productList);
+    }
+  }, []);
 
   useEffect(() => {
     const ids = products.map((product) => {
@@ -20,6 +28,7 @@ export function index() {
   function handleProductSelection(payload) {
     setIsOpen(false);
     setProducts(payload.selection);
+    store.set(`${shopOrigin}-products`, payload.selection);
   }
 
   return (
